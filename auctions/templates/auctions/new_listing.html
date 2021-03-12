@@ -1,0 +1,81 @@
+{% extends "auctions/layout.html" %} {% block body %}
+
+<h3>Add new Listing</h3>
+{% if message %}
+<div>{{ message }}</div>
+{% endif %}
+<form action="{% url 'new_listing' %}" method="post">
+	{% csrf_token %}
+	<div class="form-floating mb-3">
+		<input
+			type="text"
+			class="form-control"
+			id="title"
+			name="title"
+			placeholder="Title of the product"
+		/>
+		<label for="title">Title</label>
+	</div>
+
+	<div class="form-floating mb-3">
+		<input
+			type="text"
+			class="form-control"
+			id="description"
+			name="description"
+			placeholder="Description of the product"
+		/>
+		<label for="description">Description</label>
+	</div>
+
+	<label class="form-label">Starting Bid Amount</label>
+	<div class="input-group mb-3">
+		<span class="input-group-text">₹</span>
+		<input
+			type="number"
+			class="form-control"
+			id="starting_bid"
+			name="starting_bid"
+		/>
+	</div>
+
+	<div class="form-floating mb-3">
+		<input
+			type="url"
+			class="form-control"
+			id="image_url"
+			name="image_url"
+			placeholder="Image url of the product"
+		/>
+		<label for="image_url">Image URL (Optional)</label>
+	</div>
+	<div class="form-check form-check-inline mb-3">
+		{% for category in categories %}
+		<input
+			type="checkbox"
+			class="btn-check"
+			id="{{category}}"
+			autocomplete="off"
+			name="{{category}}"
+		/>
+		<label class="btn btn-outline-info" for="{{category}}"
+			>{{category}}</label
+		>
+		{% endfor %}
+		<br />
+		<label class="form-label"
+			>Select all the categories that applies</label
+		>
+
+
+		 <div class="input-group mb-3">
+      	<input name="new_cat" type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="New category">
+
+		
+	</div>
+	<div>
+		<input class="btn btn-primary" type="submit" value="Add Listing" />
+	</div>
+</form>
+
+{% endblock %}
