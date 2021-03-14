@@ -1,8 +1,10 @@
 {% extends "auctions/layout.html" %} {% block body %}
 <div class="container">
-	<h2>Active Listings</h2>
+	<h2>{% firstof heading "Active Listings" %}</h2>
 	{% if category %}
 	<h3>in {{category}}</h3>
+	{% endif %} {% if not listings %}
+	<div class="display-6">No Listings Available</div>
 	{% endif %} {% for listing in listings %}
 	<div class="card mb-5" id="listing" style="width: auto">
 		<div class="row g-4">
@@ -41,13 +43,16 @@
 								{% if listing.biddings.last %}
 								<small class="text-muted pl-4">Highest bid is:</small>
 								₹ {{listing.biddings.last}} {% else %}
-								<small class="text-muted pl-4">Starting bid is:</small>
-								₹ {{listing.starting_bid}} {% endif %}
+								<small class="text-muted pl-4"
+									>Starting biding price is:</small
+								>
+								₹ {{listing.starting_bid}}
 								<div>
 									<small class="text-muted pl-4"
 										>No bidding has done so far.</small
 									>
 								</div>
+								{% endif %}
 							</h5>
 						</div>
 					</div>
@@ -69,9 +74,11 @@
 						</div>
 					</div>
 					<div class="col ms-3">
-						<button class="view-button">
-							<span><a>View</a></span>
-						</button>
+						<a href="{% url 'listing' listing.id %}">
+							<button class="view-button">
+								<span>View</span>
+							</button>
+						</a>
 					</div>
 				</div>
 			</div>

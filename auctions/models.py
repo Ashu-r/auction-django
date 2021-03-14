@@ -3,14 +3,15 @@ from django.db import models
 
 
 class User(AbstractUser):
-    watchlist = models.ForeignKey(
-        'ListingItem', on_delete=models.SET_NULL, null=True, blank=True)
+    watchlist = models.ManyToManyField(
+        'ListingItem', related_name="users_on_watchlist", blank=True)
 
     def __str__(self):
-        return self.first_name + self.last_name
+        return self.username
 
 
 class ListingItem(models.Model):
+    is_active = models.BooleanField(default=True)
     title = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
@@ -44,7 +45,7 @@ class Bid(models.Model):
         ListingItem, on_delete=models.CASCADE, related_name='biddings')
 
     def __str__(self):
-        return self.bidding_amount
+        return str(self.bidding_amount)
 
 
 class Comment(models.Model):

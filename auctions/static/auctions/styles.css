@@ -1,13 +1,15 @@
 body {
-	padding: 10px;
+	padding: 6px;
 }
 
 #listing {
 	min-height: 15em;
 }
 
-a.badge {
+a.badge,
+.view-button a {
 	text-decoration: none;
+	color: white;
 }
 
 img.card-img {
@@ -21,7 +23,7 @@ img.card-img {
 	color: white;
 	border: none;
 	padding: 20px;
-	width: 200px;
+	width: 170px;
 	transition: all 0.5s;
 }
 

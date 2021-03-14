@@ -10,7 +10,7 @@ from .models import *
 
 
 def index(request):
-    listings = ListingItem.objects.all()
+    listings = ListingItem.objects.filter(is_active=True)
     return render(request, "auctions/index.html", {
         "listings": listings
     })
@@ -53,7 +53,10 @@ def register(request):
             return render(request, "auctions/register.html", {
                 "message": "Passwords must match."
             })
-
+        if not password:
+            return render(request, "auctions/register.html", {
+                "message": "Please enter the password."
+            })
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
@@ -76,11 +79,76 @@ def categories(request):
 
 
 def specific_category(request, this_category):
-    listings = ListingItem.objects.filter(item_category=this_category.title())
+    listings = ListingItem.objects.filter(
+        item_category=this_category.title(), is_active=True)
     return render(request, "auctions/index.html", {
         "listings": listings,
         "category": this_category.title(),
     })
+
+
+def listing(request, id):
+    listing_item = ListingItem.objects.get(id=int(id))
+    bidding_placed = True if listing_item.biddings.last() else False
+    last_bid = listing_item.biddings.last(
+    ).bidding_amount if bidding_placed else listing_item.starting_bid
+    try:
+        request.user.watchlist.get(id=listing_item.id)
+        on_watchlist = True
+    except:
+        on_watchlist = False
+    if request.method == "POST":
+        bid = float(request.POST["bid"])
+        if bidding_placed:
+            if not bid > last_bid:
+                return render(request, "auctions/listing.html", {
+                    "item": listing_item,
+                    "message": f"Your bid of {bid} should be more than {last_bid}. Please bid higher.",
+                    "on_watchlist": on_watchlist,
+                })
+        if not bid >= last_bid:
+            return render(request, "auctions/listing.html", {
+                "item": listing_item,
+                "message": f"Your bid of {bid} should be more than {last_bid}. Please bid higher.",
+                "on_watchlist": on_watchlist
+            })
+        try:
+            bid = Bid(bidder=request.user, bidding_time=timezone.now(),
+                      bidding_amount=bid, item=listing_item)
+            bid.save()
+            return render(request, "auctions/listing.html", {
+                "item": listing_item,
+                "message": f"Your bid of {bid} is successfully placed.",
+                "on_watchlist": on_watchlist
+            })
+        except Exception as e:
+            return render(request, "auctions/listing.html", {
+                "item": listing_item,
+                "message": e,
+                "on_watchlist": on_watchlist
+            })
+
+    else:
+
+        return render(request, "auctions/listing.html", {
+            "item": listing_item,
+            "on_watchlist": on_watchlist
+        })
+
+
+@login_required
+def watchlist_toggle(request, id):
+    listing_item = ListingItem.objects.get(id=int(id))
+    try:
+        request.user.watchlist.get(id=listing_item.id)
+        on_watchlist = True
+    except:
+        on_watchlist = False
+    if on_watchlist:
+        request.user.watchlist.remove(listing_item)
+        return HttpResponseRedirect(reverse('listing', kwargs={'id': id}))
+    request.user.watchlist.add(listing_item)
+    return HttpResponseRedirect(reverse('listing', kwargs={'id': id}))
 
 
 @login_required
@@ -123,4 +191,8 @@ def new_listing(request):
 
 @login_required
 def watchlist(request):
-    pass
+    listings = request.user.watchlist.all()
+    return render(request, "auctions/index.html", {
+        "listings": listings,
+        "heading": "Watchlist",
+    })

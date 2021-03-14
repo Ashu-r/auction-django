@@ -1,0 +1,122 @@
+{% extends "auctions/layout.html" %} {% block body %}
+
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<h3 class="display-6">
+				{{item.title}} {% if on_watchlist %}<span
+					class="fs-6 fw-light badge bg-success"
+					>On wishlist</span
+				>
+				{% endif %}
+			</h3>
+			<img
+				src="{{item.image_url}}"
+				class="img-fluid"
+				alt="{{item.title}}"
+			/>
+
+			<p class="fs-2 lead">{{item.description}}</p>
+			<div class="mb-3">
+				{% for cat in item.item_category.all %}
+				<span class="fs-5 d-inline">
+					<a
+						href="{% url 'category' cat %}"
+						class="badge bg-info text-dark"
+						>{{cat}}</a
+					>
+				</span>
+				{% endfor %}
+			</div>
+			<h5 class="card-title pricing-card-title">
+				{% load humanize %} {% if item.biddings.last %}
+				<div>
+					<small class="pl-4">Highest bid is:</small> ₹
+					{{item.biddings.last.bidding_amount|floatformat:2|intcomma}}
+				</div>
+				<div>
+					<small class="pl-4">By </small>
+					<span class="badge bg-light text-dark"
+						>{{item.biddings.last.bidder.username}}</span
+					>
+				</div>
+				<div>
+					<small class="pl-4">Starting biding price was:</small> ₹
+					{{item.starting_bid|floatformat:2|intcomma}}
+				</div>
+
+				{% else %}
+
+				<div>
+					<small class="pl-4">Starting biding price is:</small> ₹
+					{{item.starting_bid|floatformat:2|intcomma}}
+				</div>
+				<div>
+					<small class="pl-4">No bidding has done so far.</small>
+				</div>
+				{% endif %}
+			</h5>
+		</div>
+		<div class="col">
+			{% if user.is_authenticated %}
+			<div class="mb-3">
+				<a
+					class="btn btn-outline-primary btn-sm"
+					href="{% url 'watchlist_toggle' item.id %}"
+				>
+					{% if on_watchlist %} Remove from watchlist {% else %} Add to
+					watchlist {% endif %}</a
+				>
+			</div>
+			{% endif %}
+
+			<div>
+				<h5 class="">Listed at {{item.time_created}}</h5>
+			</div>
+			<div class="mb-4">
+				<h5 class="text-gray-800">
+					By
+					<span class="badge bg-light text-dark"
+						>{{item.seller.username}}</span
+					>
+				</h5>
+			</div>
+			<form action="{% url 'listing' item.id %}" method="post">
+				{% csrf_token %}
+				<label class="form-label">Bid Amount</label>
+				<div class="input-group mb-3">
+					<span class="input-group-text">₹</span>
+					<input
+						type="number"
+						class="form-control"
+						id="starting_bid"
+						value="{% firstof item.biddings.last item.starting_bid %}"
+						name="bid"
+					/>
+				</div>
+
+				<div class="mb-3">
+					<small class="text-muted"
+						>Note: Bidding Amount should be larger than last bid (if it
+						exists) or the starting bid.</small
+					>
+				</div>
+				<button class="view-button ms-1 mb-3" type="submit">
+					<span class="fs-2">Bid</span>
+				</button>
+			</form>
+			{% if item.seller == user %}<button
+				type="button"
+				class="ms-1 btn btn-danger btn-lg"
+			>
+				Close Bidding</button
+			>{% endif %} {% if message %}
+			<div class="mb-3">
+				<p class="fs-5 badge bg-warning text-dark">{{message}}</p>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+
+	{% endblock %}
+</div>

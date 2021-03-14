@@ -1,67 +1,86 @@
 {% extends "auctions/layout.html" %} {% block body %}
+<div class="container">
+	<h2>Register</h2>
 
-<h2>Register</h2>
+	{% if message %}
+	<div class="mb-3">
+		<p class="fs-5 badge bg-warning text-dark">{{message}}</p>
+	</div>
+	{% endif %}
 
-{% if message %}
-<div>{{ message }}</div>
-{% endif %}
+	<form action="{% url 'register' %}" method="post">
+		{% csrf_token %}
+		<div class="form-floating mb-3">
+			<input
+				type="text"
+				autofocus
+				class="form-control"
+				id="username"
+				name="username"
+				placeholder="Username"
+			/>
+			<label for="username">Username</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+				type="email"
+				class="form-control"
+				id="email"
+				name="email"
+				placeholder="Email Address"
+			/>
+			<label for="email">Email Address</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+				type="text"
+				class="form-control"
+				id="first_name"
+				name="first_name"
+				placeholder="First Name"
+				required
+			/>
+			<label for="first_name">First Name (Optional)</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+				type="text"
+				class="form-control"
+				id="last_name"
+				name="last_name"
+				placeholder="First Name"
+			/>
+			<label for="last_name">Last Name (Optional)</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+				type="password"
+				class="form-control"
+				id="password"
+				name="password"
+				placeholder="Password"
+				required
+			/>
+			<label for="password">Password</label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+				type="password"
+				class="form-control"
+				id="confirmation"
+				name="confirmation"
+				placeholder="confirmation"
+				required
+			/>
+			<label for="confirmation">Confirm Password</label>
+		</div>
+		<input
+			class="btn btn-primary mb-3"
+			type="submit"
+			value="Register"
+		/>
+	</form>
 
-<form action="{% url 'register' %}" method="post">
-	{% csrf_token %}
-	<div class="form-group">
-		<input
-			class="form-control"
-			autofocus
-			type="text"
-			name="username"
-			placeholder="Username"
-		/>
-	</div>
-	<div class="form-group">
-		<input
-			class="form-control"
-			type="email"
-			name="email"
-			placeholder="Email Address"
-		/>
-	</div>
-	<div class="form-group">
-		<input
-			class="form-control"
-			type="text"
-			name="first_name"
-			placeholder="First Name"
-			required
-		/>
-	</div>
-	<div class="form-group">
-		<input
-			class="form-control"
-			type="text"
-			name="last_ame"
-			placeholder="Last Name"
-			required
-		/>
-	</div>
-	<div class="form-group">
-		<input
-			class="form-control"
-			type="password"
-			name="password"
-			placeholder="Password"
-		/>
-	</div>
-	<div class="form-group">
-		<input
-			class="form-control"
-			type="password"
-			name="confirmation"
-			placeholder="Confirm Password"
-		/>
-	</div>
-	<input class="btn btn-primary" type="submit" value="Register" />
-</form>
-
-Already have an account? <a href="{% url 'login' %}">Log In here.</a>
-
+	Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+</div>
 {% endblock %}
