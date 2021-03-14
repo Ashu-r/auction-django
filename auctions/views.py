@@ -152,6 +152,16 @@ def watchlist_toggle(request, id):
 
 
 @login_required
+def close_bidding(request, id):
+    listing_item = ListingItem.objects.get(id=int(id))
+    if not listing_item.seller.get_username() == request.user.username:
+        return HttpResponse("Access Denied")
+    listing_item.is_active = False
+    listing_item.save()
+    return HttpResponseRedirect(reverse('listing', kwargs={'id': id}))
+
+
+@ login_required
 def new_listing(request):
     categories = Category.objects.all()
     if request.method == "POST":
@@ -189,7 +199,7 @@ def new_listing(request):
         })
 
 
-@login_required
+@ login_required
 def watchlist(request):
     listings = request.user.watchlist.all()
     return render(request, "auctions/index.html", {

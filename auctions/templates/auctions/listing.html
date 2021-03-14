@@ -105,16 +105,28 @@
 					<span class="fs-2">Bid</span>
 				</button>
 			</form>
-			{% if item.seller == user %}<button
+			{% if not item.is_active %}
+			<button
+				type="button"
+				class="ms-1 btn btn-danger btn-lg"
+				disabled
+			>
+				Bidding Closed</button
+			>
+			
+			{% elif item.seller == user %}
+			<a href="{% url 'close_bidding' item.id %}"
+			<button
 				type="button"
 				class="ms-1 btn btn-danger btn-lg"
 			>
 				Close Bidding</button
-			>{% endif %} {% if message %}
+			></a>{% endif %} {% if message %}
 			<div class="mb-3">
 				<p class="fs-5 badge bg-warning text-dark">{{message}}</p>
 			</div>
 			{% endif %}
+			
 		</div>
 	</div>
 
