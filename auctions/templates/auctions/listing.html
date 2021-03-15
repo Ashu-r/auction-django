@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %} {% block body %}
 <div class="container">
 	<div class="row">
-		<div class="col-5">
+		<div class="col-12 col-lg-5">
 			<h3 class="display-5">
 				{{ item.title }} {% if on_watchlist %}
 				<span class="fs-6 fw-light badge bg-success">On wishlist</span>
@@ -19,7 +19,7 @@
 			<h5 class="card-title pricing-card-title">
 				{% load humanize %} {% if item.biddings.last %}
 				<div>
-					<small class="pl-4">Highest bid is:</small>
+					<small class="pl-4">Highest bid:</small>
 					₹ {{ item.biddings.last.bidding_amount|floatformat:2|intcomma}}
 				</div>
 				<div>
@@ -27,7 +27,7 @@
 					<span class="badge bg-light text-dark">{{ item.biddings.last.bidder.username }}</span>
 				</div>
 				<div>
-					<small class="pl-4">Starting biding price was:</small>
+					<small class="pl-4">Bidding started at:</small>
 					₹ {{ item.starting_bid|floatformat:2|intcomma }}
 				</div>
 				{% else %}
@@ -41,7 +41,7 @@
 				{% endif %}
 			</h5>
 		</div>
-		<div class="col-7">
+		<div class="col-12 col-lg-7">
 			{% if user.is_authenticated %}
 			<div class="mb-3">
 				<a class="btn btn-outline-primary btn-sm" href="{% url 'watchlist_toggle' item.id %}">
@@ -49,8 +49,9 @@
 				</a>
 			</div>
 			{% endif %}
+			{% load humanize %}
 			<div>
-				<h5 class="">Listed at {{ item.time_created }}</h5>
+				<h5 class="">Listed {{ item.time_created|naturaltime }}</h5>
 			</div>
 			<div class="mb-4">
 				<h5 class="text-gray-800">
@@ -73,17 +74,18 @@
 					<span class="fs-2">Bid</span>
 				</button>
 			</form>
+			{% else %}
+			<div class="mb-3">
+				<small class="text-muted">You must be <a href="{% url 'login' %}">Signed in</a> to be abled to bid on any item.</small>
+			</div>
 			{% endif %} {% if not item.is_active %}
 			<button type="button" class="ms-1 btn btn-danger btn-lg" disabled>Bidding Closed</button>
 			{% elif item.seller == user %}
-			<a
-				href="{% url 'close_bidding' item.id %}">
-				<button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a
-			>
+			<a href="{% url 'close_bidding' item.id %}"> <button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a>
 			{% endif %} {% if messages %}
 			<div class="mb-3">
 				{% for message in messages %}
-				<p class="fs-5 badge bg-warning text-dark">{{ message|linebreaksbr  }}</p>
+				<p class="fs-5 badge bg-warning text-dark">{{ message|linebreaksbr }}</p>
 			</div>
 			{% endfor %} {% endif %}
 			<div>
@@ -98,6 +100,7 @@
 		<div class="row">
 			<div class="col-12">
 				<h2 class="fs-2 lead">Comments</h2>
+				{% if user.is_authenticated %}
 				<form action="{% url 'listing' item.id %}" method="post">
 					{% csrf_token %}
 					<div class="form-floating mb-3">
@@ -110,6 +113,11 @@
 						</div>
 					</div>
 				</form>
+				{% else %}
+				<div class="mb-3">
+					<small class="text-muted">You must be <a href="{% url 'login' %}">Signed in</a> to add a comment</small>
+				</div>
+				{% endif %}
 				<hr />
 			</div>
 			<div class="col-12">

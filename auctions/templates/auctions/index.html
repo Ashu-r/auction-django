@@ -1,67 +1,71 @@
 {% extends "auctions/layout.html" %} {% block body %}
-<div class="container">
+<div class="container-lg">
 	<h2>{% firstof heading "Active Listings" %}</h2>
 	{% if category %}
 	<h3>in {{category}}</h3>
 	{% endif %} {% if not listings %}
 	<div class="display-6">No Listings Available</div>
 	{% endif %} {% for listing in listings %}
-	<div class="card mb-5" id="listing" style="width: auto">
-		<div class="row g-4">
-			<div class="col-sm-3">
-				{% if listing.image_url %}<img class="card-img" src="{{ listing.image_url}}" alt="{{listing.title}}" />{% else %}
-				<img class="card-img" src="static/auctions/images/no-image.jpg" alt="{{listing.title}}" />{% endif %}
-			</div>
-			<div class="col">
-				<div class="row g-2">
-					<div class="col">
-						<div class="card-body">
-							<h5 class="card-title">{{listing.title}}</h5>
-							<p class="card-text">{{listing.description}}</p>
-
-							{% for cat in listing.item_category.all %}
-							<a href="{% url 'category' cat %}" class="badge bg-info text-dark">{{cat}}</a>
-							{% endfor %}
-						</div>
-					</div>
-
-					<div class="col">
-						<div class="card-body">
-							<h5 class="card-title pricing-card-title">
-								{% load humanize %} {% if listing.biddings.last %}
-								<small class="text-muted pl-4">Highest bid is:</small>
-								₹ {{listing.biddings.last.bidding_amount|floatformat:2|intcomma}} {% else %}
-								<small class="text-muted pl-4">Starting biding price is:</small>
-								₹ {{listing.starting_bid|floatformat:2|intcomma}}
-								<div>
-									<small class="text-muted pl-4">No bidding has done so far.</small>
-								</div>
-								{% endif %}
-							</h5>
-						</div>
-					</div>
+	<div class="row-cols-1">
+		<div class="card mb-5" id="listing" style="width: auto">
+			<div class="row g-4">
+				<div class="col-md-12 col-lg-5">
+					{% if listing.image_url %}<img class="card-img" src="{{ listing.image_url}}" alt="{{listing.title}}" />{% else %}
+					<img class="card-img" src="static/auctions/images/no-image.jpg" alt="{{listing.title}}" />{% endif %}
 				</div>
-				<div class="row g-2">
-					<div class="col">
-						<div class="ms-3">
-							<small class="text-muted">Listed at {{listing.time_created}}</small>
+				<div class="col-md-12 col-lg-7">
+					<div class="row g-2">
+						<div class="col-lg-6">
+							<div class="card-body">
+								<h5 class="card-title">{{listing.title}}</h5>
+								<p class="card-text">{{listing.description}}</p>
+
+								{% for cat in listing.item_category.all %}
+								<a href="{% url 'category' cat %}" class="badge bg-info text-dark">{{cat}}</a>
+								{% endfor %}
+							</div>
 						</div>
-						<div class="ms-3">
-							<small class="text-muted text-gray-800">By <span class="badge bg-light text-dark">{{listing.seller.username}}</span></small>
+
+						<div class="col-lg-6">
+							<div class="card-body">
+								<h5 class="card-title pricing-card-title">
+									{% load humanize %} {% if listing.biddings.last %}
+									<small class="text-muted pl-4">Highest bid is:</small>
+									₹ {{listing.biddings.last.bidding_amount|floatformat:2|intcomma}} {% else %}
+									<small class="text-muted pl-4">Starting biding price is:</small>
+									₹ {{listing.starting_bid|floatformat:2|intcomma}}
+									<div>
+										<small class="text-muted pl-4">No bidding has done so far.</small>
+									</div>
+									{% endif %}
+								</h5>
+							</div>
 						</div>
 					</div>
-					<div class="col ms-3">
-						<a href="{% url 'listing' listing.id %}">
-							<button class="view-button">
-								<span>View</span>
-							</button>
-						</a>
+					<div class="row g-2">
+						<div class="col-lg-5  order-2 order-lg-1">
+							<div class="ms-3">
+								<small class="text-muted">Listed at {{listing.time_created}}</small>
+							</div>
+							<div class="ms-3">
+								<small class="text-muted text-gray-800">By <span class="badge bg-light text-dark">{{listing.seller.username}}</span></small>
+							</div>
+						</div>
+						<div class="mb-3 mb-lg-2 col-lg-6  order-1 order-lg-2 ms-lg-3">
+							<div class="row justify-content-center">
+								<a class="mx-auto text-center" href="{% url 'listing' listing.id %}">
+									<button class="view-button">
+										<span>View</span>
+									</button>
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	{% endfor %}
+		{% endfor %}
+	</div>
+	{% endblock %}
 </div>
-{% endblock %}

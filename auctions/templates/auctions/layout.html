@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{% block title %}Auctions{% endblock %}</title>
 		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
@@ -15,9 +17,21 @@
 	<body>
 		<nav class="navbar navbar-light" style="background-color: #e3f2fd">
 			<div class="container-fluid">
-				<span class="navbar-brand">Auctions</span>
-				<div>
-					<ul class="nav">
+				<a class="navbar-brand" href="/">Auctions</a>
+				<button
+					class="navbar-toggler mb-2"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarNav"
+					aria-controls="navbarNav"
+					aria-expanded="false"
+					aria-label="Toggle navigation"
+				>
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="nav flex-wrap justify-content-between">
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'index' %}">Active Listings</a>
 						</li>
@@ -28,6 +42,7 @@
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
 						</li>
+
 						<li class="nav-item me-3">
 							<a class="btn btn-primary" href="{% url 'new_listing' %}">Create new Listing</a>
 						</li>
@@ -53,5 +68,10 @@
 		</div>
 		<hr />
 		{% block body %} {% endblock %}
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+			crossorigin="anonymous"
+		></script>
 	</body>
 </html>
