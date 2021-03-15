@@ -76,8 +76,8 @@
 			{% endif %} {% if not item.is_active %}
 			<button type="button" class="ms-1 btn btn-danger btn-lg" disabled>Bidding Closed</button>
 			{% elif item.seller == user %}
-			<a>
-				href="{% url 'close_bidding' item.id %}"
+			<a
+				href="{% url 'close_bidding' item.id %}">
 				<button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a
 			>
 			{% endif %} {% if messages %}
