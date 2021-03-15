@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %} {% block body %}
 <div class="container">
 	<div class="row">
-		<div class="col">
+		<div class="col-5">
 			<h3 class="display-5">
 				{{ item.title }} {% if on_watchlist %}
 				<span class="fs-6 fw-light badge bg-success">On wishlist</span>
@@ -41,7 +41,7 @@
 				{% endif %}
 			</h5>
 		</div>
-		<div class="col">
+		<div class="col-7">
 			{% if user.is_authenticated %}
 			<div class="mb-3">
 				<a class="btn btn-outline-primary btn-sm" href="{% url 'watchlist_toggle' item.id %}">
@@ -83,7 +83,7 @@
 			{% endif %} {% if messages %}
 			<div class="mb-3">
 				{% for message in messages %}
-				<p class="fs-5 badge bg-warning text-dark">{{ message }}</p>
+				<p class="fs-5 badge bg-warning text-dark">{{ message|linebreaksbr  }}</p>
 			</div>
 			{% endfor %} {% endif %}
 			<div>

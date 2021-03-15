@@ -115,12 +115,12 @@ def listing(request, id):
             if bidding_placed:
                 if not bid > last_bid:
                     messages.success(
-                        request, f"Your bid of {bid} should be more than {last_bid}. Please bid higher.")
+                        request, f"Your bid of {bid} should be more than\n {last_bid}. Please bid higher.")
                     invalid_request = True
 
             elif not bid >= last_bid:
                 messages.success(
-                    request, f"Your bid of {bid} should be more than or should match {last_bid}. Please bid higher.")
+                    request, f"Your bid of {bid} should be more than\n or should match {last_bid}. Please bid higher.")
                 invalid_request = True
             if not invalid_request:
                 try:
@@ -128,7 +128,7 @@ def listing(request, id):
                               bidding_amount=bid, item=listing_item)
                     bid.save()
                     messages.success(
-                        request, f"Your bid of {bid} is successfully placed.")
+                        request, f"Your bid of {bid} is successfully\n placed.")
                 except Exception as e:
                     messages.success(request, e)
 
