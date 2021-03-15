@@ -9,16 +9,8 @@
 	<div class="card mb-5" id="listing" style="width: auto">
 		<div class="row g-4">
 			<div class="col-sm-3">
-				{% if listing.image_url %}<img
-					class="card-img"
-					src="{{ listing.image_url}}"
-					alt="{{listing.title}}"
-				/>{% else %}
-				<img
-					class="card-img"
-					src="static/auctions/images/no-image.jpg"
-					alt="{{listing.title}}"
-				/>{% endif %}
+				{% if listing.image_url %}<img class="card-img" src="{{ listing.image_url}}" alt="{{listing.title}}" />{% else %}
+				<img class="card-img" src="static/auctions/images/no-image.jpg" alt="{{listing.title}}" />{% endif %}
 			</div>
 			<div class="col">
 				<div class="row g-2">
@@ -28,11 +20,7 @@
 							<p class="card-text">{{listing.description}}</p>
 
 							{% for cat in listing.item_category.all %}
-							<a
-								href="{% url 'category' cat %}"
-								class="badge bg-info text-dark"
-								>{{cat}}</a
-							>
+							<a href="{% url 'category' cat %}" class="badge bg-info text-dark">{{cat}}</a>
 							{% endfor %}
 						</div>
 					</div>
@@ -40,17 +28,13 @@
 					<div class="col">
 						<div class="card-body">
 							<h5 class="card-title pricing-card-title">
-								{% if listing.biddings.last %}
+								{% load humanize %} {% if listing.biddings.last %}
 								<small class="text-muted pl-4">Highest bid is:</small>
-								₹ {{listing.biddings.last}} {% else %}
-								<small class="text-muted pl-4"
-									>Starting biding price is:</small
-								>
-								₹ {{listing.starting_bid}}
+								₹ {{listing.biddings.last.bidding_amount|floatformat:2|intcomma}} {% else %}
+								<small class="text-muted pl-4">Starting biding price is:</small>
+								₹ {{listing.starting_bid|floatformat:2|intcomma}}
 								<div>
-									<small class="text-muted pl-4"
-										>No bidding has done so far.</small
-									>
+									<small class="text-muted pl-4">No bidding has done so far.</small>
 								</div>
 								{% endif %}
 							</h5>
@@ -60,17 +44,10 @@
 				<div class="row g-2">
 					<div class="col">
 						<div class="ms-3">
-							<small class="text-muted"
-								>Listed at {{listing.time_created}}</small
-							>
+							<small class="text-muted">Listed at {{listing.time_created}}</small>
 						</div>
 						<div class="ms-3">
-							<small class="text-muted text-gray-800"
-								>By
-								<span class="badge bg-light text-dark"
-									>{{listing.seller.username}}</span
-								></small
-							>
+							<small class="text-muted text-gray-800">By <span class="badge bg-light text-dark">{{listing.seller.username}}</span></small>
 						</div>
 					</div>
 					<div class="col ms-3">

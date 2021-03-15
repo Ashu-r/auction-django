@@ -1,55 +1,39 @@
 {% extends "auctions/layout.html" %} {% block body %}
-
 <div class="container">
 	<div class="row">
 		<div class="col">
-			<h3 class="display-6">
-				{{item.title}} {% if on_watchlist %}<span
-					class="fs-6 fw-light badge bg-success"
-					>On wishlist</span
-				>
+			<h3 class="display-5">
+				{{ item.title }} {% if on_watchlist %}
+				<span class="fs-6 fw-light badge bg-success">On wishlist</span>
 				{% endif %}
 			</h3>
-			<img
-				src="{{item.image_url}}"
-				class="img-fluid"
-				alt="{{item.title}}"
-			/>
-
-			<p class="fs-2 lead">{{item.description}}</p>
+			<img src="{{ item.image_url }}" class="img-fluid" alt="{{ item.title }}" />
+			<p class="fs-2 lead">{{ item.description }}</p>
 			<div class="mb-3">
 				{% for cat in item.item_category.all %}
 				<span class="fs-5 d-inline">
-					<a
-						href="{% url 'category' cat %}"
-						class="badge bg-info text-dark"
-						>{{cat}}</a
-					>
+					<a href="{% url 'category' cat %}" class="badge bg-info text-dark">{{ cat }}</a>
 				</span>
 				{% endfor %}
 			</div>
 			<h5 class="card-title pricing-card-title">
 				{% load humanize %} {% if item.biddings.last %}
 				<div>
-					<small class="pl-4">Highest bid is:</small> ₹
-					{{item.biddings.last.bidding_amount|floatformat:2|intcomma}}
+					<small class="pl-4">Highest bid is:</small>
+					₹ {{ item.biddings.last.bidding_amount|floatformat:2|intcomma}}
 				</div>
 				<div>
 					<small class="pl-4">By </small>
-					<span class="badge bg-light text-dark"
-						>{{item.biddings.last.bidder.username}}</span
-					>
+					<span class="badge bg-light text-dark">{{ item.biddings.last.bidder.username }}</span>
 				</div>
 				<div>
-					<small class="pl-4">Starting biding price was:</small> ₹
-					{{item.starting_bid|floatformat:2|intcomma}}
+					<small class="pl-4">Starting biding price was:</small>
+					₹ {{ item.starting_bid|floatformat:2|intcomma }}
 				</div>
-
 				{% else %}
-
 				<div>
-					<small class="pl-4">Starting biding price is:</small> ₹
-					{{item.starting_bid|floatformat:2|intcomma}}
+					<small class="pl-4">Starting biding price is:</small>
+					₹ {{ item.starting_bid|floatformat:2|intcomma }}
 				</div>
 				<div>
 					<small class="pl-4">No bidding has done so far.</small>
@@ -60,75 +44,88 @@
 		<div class="col">
 			{% if user.is_authenticated %}
 			<div class="mb-3">
-				<a
-					class="btn btn-outline-primary btn-sm"
-					href="{% url 'watchlist_toggle' item.id %}"
-				>
-					{% if on_watchlist %} Remove from watchlist {% else %} Add to
-					watchlist {% endif %}</a
-				>
+				<a class="btn btn-outline-primary btn-sm" href="{% url 'watchlist_toggle' item.id %}">
+					{% if on_watchlist %} Remove from watchlist {% else %} Add to watchlist {% endif %}
+				</a>
 			</div>
 			{% endif %}
-
 			<div>
-				<h5 class="">Listed at {{item.time_created}}</h5>
+				<h5 class="">Listed at {{ item.time_created }}</h5>
 			</div>
 			<div class="mb-4">
 				<h5 class="text-gray-800">
 					By
-					<span class="badge bg-light text-dark"
-						>{{item.seller.username}}</span
-					>
+					<span class="badge bg-light text-dark">{{ item.seller.username }}</span>
 				</h5>
 			</div>
+			{% if user.is_authenticated %}
 			<form action="{% url 'listing' item.id %}" method="post">
 				{% csrf_token %}
 				<label class="form-label">Bid Amount</label>
 				<div class="input-group mb-3">
 					<span class="input-group-text">₹</span>
-					<input
-						type="number"
-						class="form-control"
-						id="starting_bid"
-						value="{% firstof item.biddings.last item.starting_bid %}"
-						name="bid"
-					/>
+					<input type="number" class="form-control" id="starting_bid" value="{% firstof item.biddings.last item.starting_bid %}" name="bid" />
 				</div>
-
 				<div class="mb-3">
-					<small class="text-muted"
-						>Note: Bidding Amount should be larger than last bid (if it
-						exists) or the starting bid.</small
-					>
+					<small class="text-muted">Note: Bidding Amount should be larger than last bid (if it exists) or the starting bid.</small>
 				</div>
 				<button class="view-button ms-1 mb-3" type="submit">
 					<span class="fs-2">Bid</span>
 				</button>
 			</form>
-			{% if not item.is_active %}
-			<button
-				type="button"
-				class="ms-1 btn btn-danger btn-lg"
-				disabled
-			>
-				Bidding Closed</button
-			>
-			
+			{% endif %} {% if not item.is_active %}
+			<button type="button" class="ms-1 btn btn-danger btn-lg" disabled>Bidding Closed</button>
 			{% elif item.seller == user %}
-			<a href="{% url 'close_bidding' item.id %}"
-			<button
-				type="button"
-				class="ms-1 btn btn-danger btn-lg"
+			<a>
+				href="{% url 'close_bidding' item.id %}"
+				<button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a
 			>
-				Close Bidding</button
-			></a>{% endif %} {% if message %}
+			{% endif %} {% if messages %}
 			<div class="mb-3">
-				<p class="fs-5 badge bg-warning text-dark">{{message}}</p>
+				{% for message in messages %}
+				<p class="fs-5 badge bg-warning text-dark">{{ message }}</p>
 			</div>
-			{% endif %}
-			
+			{% endfor %} {% endif %}
+			<div>
+				{% load humanize %} {% if not item.is_active %}
+				<div class="fs-2 lead">
+					Auction has been closed and {{item.biddings.last.bidder}}'s bid of ₹ {{ item.biddings.last.bidding_amount|floatformat:2|intcomma}} has wone.
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<hr class="double-hr" />
+		<div class="row">
+			<div class="col-12">
+				<h2 class="fs-2 lead">Comments</h2>
+				<form action="{% url 'listing' item.id %}" method="post">
+					{% csrf_token %}
+					<div class="form-floating mb-3">
+						<input class="form-control" placeholder="Leave a comment here" name="comment_text" id="floatingTextarea" />
+						<label for="floatingTextarea">Add comment</label>
+					</div>
+					<div class="d-flex">
+						<div class="ms-auto">
+							<button type="submit" class="btn btn-primary">Add</button>
+						</div>
+					</div>
+				</form>
+				<hr />
+			</div>
+			<div class="col-12">
+				{% for comment in comments %} {% load humanize %}
+				<div class="col-12 comment mt-4 text-justify float-left">
+					<img src="http://www.gravatar.com/avatar/?d=mp" alt="" class="rounded-circle" width="40" height="40" />
+					<h4>{{comment.author.username}}</h4>
+					<span>- {{comment.created|naturaltime}}</span> <br />
+					<p>{{comment.comment_text|linebreaks}}</p>
+				</div>
+				{% empty %}
+				<p>There are no comments yet.</p>
+				{% endfor %}
+			</div>
 		</div>
 	</div>
-
+	<hr class="double-hr" />
 	{% endblock %}
 </div>

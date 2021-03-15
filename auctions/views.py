@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import fields
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from django.contrib import messages
 from .models import *
 
 
@@ -92,51 +93,56 @@ def listing(request, id):
     bidding_placed = True if listing_item.biddings.last() else False
     last_bid = listing_item.biddings.last(
     ).bidding_amount if bidding_placed else listing_item.starting_bid
+    comments = listing_item.comments.filter(active=True)
+
     try:
         request.user.watchlist.get(id=listing_item.id)
         on_watchlist = True
     except:
         on_watchlist = False
+
     if request.method == "POST":
-        bid = float(request.POST["bid"])
-        if bidding_placed:
-            if not bid > last_bid:
-                return render(request, "auctions/listing.html", {
-                    "item": listing_item,
-                    "message": f"Your bid of {bid} should be more than {last_bid}. Please bid higher.",
-                    "on_watchlist": on_watchlist,
-                })
-        if not bid >= last_bid:
-            return render(request, "auctions/listing.html", {
-                "item": listing_item,
-                "message": f"Your bid of {bid} should be more than {last_bid}. Please bid higher.",
-                "on_watchlist": on_watchlist
-            })
-        try:
-            bid = Bid(bidder=request.user, bidding_time=timezone.now(),
-                      bidding_amount=bid, item=listing_item)
-            bid.save()
-            return render(request, "auctions/listing.html", {
-                "item": listing_item,
-                "message": f"Your bid of {bid} is successfully placed.",
-                "on_watchlist": on_watchlist
-            })
-        except Exception as e:
-            return render(request, "auctions/listing.html", {
-                "item": listing_item,
-                "message": e,
-                "on_watchlist": on_watchlist
-            })
+        invalid_request = False
+        if 'comment_text' in request.POST:
+            comment_text = request.POST['comment_text']
+            new_comment = Comment(
+                listing=listing_item, author=request.user, comment_text=comment_text)
+            new_comment.save()
+            messages.success(request, "Your comment has been added.")
 
-    else:
+        else:
+            bid = float(request.POST["bid"])
+            if bidding_placed:
+                if not bid > last_bid:
+                    messages.success(
+                        request, f"Your bid of {bid} should be more than {last_bid}. Please bid higher.")
+                    invalid_request = True
 
-        return render(request, "auctions/listing.html", {
-            "item": listing_item,
-            "on_watchlist": on_watchlist
-        })
+            elif not bid >= last_bid:
+                messages.success(
+                    request, f"Your bid of {bid} should be more than or should match {last_bid}. Please bid higher.")
+                invalid_request = True
+            if not invalid_request:
+                try:
+                    bid = Bid(bidder=request.user, bidding_time=timezone.now(),
+                              bidding_amount=bid, item=listing_item)
+                    bid.save()
+                    messages.success(
+                        request, f"Your bid of {bid} is successfully placed.")
+                except Exception as e:
+                    messages.success(request, e)
+
+        return HttpResponseRedirect(reverse('listing', kwargs={'id': id}))
+
+    # messages.success(request, None)
+    return render(request, "auctions/listing.html", {
+        "item": listing_item,
+        "on_watchlist": on_watchlist,
+        'comments': comments,
+    })
 
 
-@login_required
+@ login_required
 def watchlist_toggle(request, id):
     listing_item = ListingItem.objects.get(id=int(id))
     try:
@@ -151,7 +157,7 @@ def watchlist_toggle(request, id):
     return HttpResponseRedirect(reverse('listing', kwargs={'id': id}))
 
 
-@login_required
+@ login_required
 def close_bidding(request, id):
     listing_item = ListingItem.objects.get(id=int(id))
     if not listing_item.seller.get_username() == request.user.username:

@@ -51,3 +51,21 @@ img.card-img {
 	opacity: 1;
 	right: 0;
 }
+
+.double-hr {
+	border-top: 5px double #8c8b8b;
+}
+
+.comment {
+    border: 1px solid rgba(16, 46, 46, 1);
+    float: left;
+    border-radius: 5px;
+    padding-left: 40px;
+    padding-right: 30px;
+    padding-top: 10px
+}
+
+.comment h4,
+.comment span {
+    display: inline
+}

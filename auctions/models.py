@@ -15,7 +15,7 @@ class ListingItem(models.Model):
     title = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
-    time_created = models.DateTimeField()
+    time_created = models.DateTimeField(auto_now_add=True)
     item_category = models.ManyToManyField(
         "Category", related_name="item", blank=True)
     image_url = models.URLField(max_length=150, blank=True)
@@ -55,6 +55,12 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name='comments')
     comment_text = models.CharField(max_length=250)
     likes = models.PositiveIntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
 
     def __str__(self):
         return self.comment_text
