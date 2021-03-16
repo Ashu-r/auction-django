@@ -12,11 +12,12 @@
 			integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
 			crossorigin="anonymous"
 		/>
+		<link rel="shortcut icon" href="{%  static 'auctions/images/favicon.png' %}" />
 		<link href="{% static 'auctions/styles.css' %}" rel="stylesheet" />
 	</head>
 	<body>
-		<nav class="navbar navbar-light" style="background-color: #e3f2fd">
-			<div class="container-fluid">
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd">
+			<div class="container-lg">
 				<a class="navbar-brand" href="/">Auctions</a>
 				<button
 					class="navbar-toggler mb-2"
@@ -62,10 +63,13 @@
 				</div>
 			</div>
 		</nav>
-		<div class="ms-2">
-			{% if user.is_authenticated %} Signed in as
-			<strong>{{ user.username }}</strong>. {% else %} Not signed in. {%endif %}
+		<div class="container-lg">
+			<div class="ms-2">
+				{% if user.is_authenticated %} Signed in as
+				<strong>{{ user.username }}</strong>. {% else %} Not signed in. {%endif %}
+			</div>
 		</div>
+
 		<hr />
 		{% block body %} {% endblock %}
 		<script
