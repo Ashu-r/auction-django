@@ -175,6 +175,8 @@ def new_listing(request):
         description = request.POST["description"]
         starting_bid = request.POST["starting_bid"]
         image_url = request.POST["image_url"]
+        if image_url.startswith('http://'):
+            image_url = image_url.replace('http://', 'https://', 1)
         item_category = []
         for category in categories:
             if category.name in request.POST:
