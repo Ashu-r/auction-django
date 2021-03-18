@@ -48,8 +48,7 @@
 					{% if on_watchlist %} Remove from watchlist {% else %} Add to watchlist {% endif %}
 				</a>
 			</div>
-			{% endif %}
-			{% load humanize %}
+			{% endif %} {% load humanize %}
 			<div>
 				<h5 class="">Listed {{ item.time_created|naturaltime }}</h5>
 			</div>
@@ -82,12 +81,7 @@
 			<button type="button" class="ms-1 btn btn-danger btn-lg" disabled>Bidding Closed</button>
 			{% elif item.seller == user %}
 			<a href="{% url 'close_bidding' item.id %}"> <button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a>
-			{% endif %} {% if messages %}
-			<div class="mb-3">
-				{% for message in messages %}
-				<p class="fs-5 badge bg-warning text-dark">{{ message|linebreaksbr }}</p>
-			</div>
-			{% endfor %} {% endif %}
+			{% endif %}
 			<div>
 				{% load humanize %} {% if not item.is_active %}
 				<div class="fs-2 lead">
@@ -123,10 +117,18 @@
 			<div class="col-12">
 				{% for comment in comments %} {% load humanize %}
 				<div class="col-12 comment mt-4 text-justify float-left">
-					<img src="http://www.gravatar.com/avatar/?d=mp" alt="" class="rounded-circle" width="40" height="40" />
-					<h4>{{comment.author.username}}</h4>
-					<span>- {{comment.created|naturaltime}}</span> <br />
-					<p>{{comment.comment_text|linebreaks}}</p>
+					<div class="row">
+						<div class="col-auto">
+							<img src="http://www.gravatar.com/avatar/?d=mp" alt="" class="rounded-circle" width="40" height="40" />
+						</div>
+						<div class="col-auto">
+							<h4>{{comment.author.username}}</h4>
+						</div>
+						<div class="col-auto"><span class="text-muted">- {{comment.created|naturaltime}}</span> <br /></div>
+					</div>
+					<div class="row">
+						<p>{{comment.comment_text|linebreaks}}</p>
+					</div>
 				</div>
 				{% empty %}
 				<p>There are no comments yet.</p>
