@@ -83,11 +83,13 @@
 			<a href="{% url 'close_bidding' item.id %}"> <button type="button" class="ms-1 btn btn-danger btn-lg">Close Bidding</button></a>
 			{% endif %}
 			<div>
-				{% load humanize %} {% if not item.is_active %}
+				{% load humanize %} {% if not item.is_active %} {% if item.biddings.last %}
 				<div class="fs-2 lead">
-					Auction has been closed and {{item.biddings.last.bidder}}'s bid of ₹ {{ item.biddings.last.bidding_amount|floatformat:2|intcomma}} has wone.
+					Auction has been closed and {{item.biddings.last.bidder}}'s bid of ₹ {{ item.biddings.last.bidding_amount|floatformat:2|intcomma}} has won.
 				</div>
-				{% endif %}
+				{% else %}
+				<div class="fs-2 lead">Auction has been closed and noone has bid on the item. So no winner is declared!</div>
+				{% endif %} {% endif %}
 			</div>
 		</div>
 		<hr class="double-hr" />
